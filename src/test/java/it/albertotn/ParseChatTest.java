@@ -49,4 +49,16 @@ public final class ParseChatTest {
 		String output = parseChat.parse(input);
 		assertTrue(output.equals(expectedOutput));
 	}
+
+	@Test
+	public void step3Test() throws IOException {
+		ParseChat parseChat = new ParseChat();
+		String input = parseChat.readFromFile("step3.txt");
+		assertTrue(!input.isEmpty());
+		String expectedOutput = parseChat.readFromFile("step3-output.txt");
+		assertTrue(!input.isEmpty());
+
+		String output = parseChat.parse(input);
+		assertTrue(output.equals(expectedOutput));
+	}
 }

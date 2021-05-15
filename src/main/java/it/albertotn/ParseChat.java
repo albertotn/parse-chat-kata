@@ -23,7 +23,8 @@ public final class ParseChat {
 		}
 		List<ChatModel> res = new ArrayList<ChatModel>();
 		String[] lines = StringUtils.split(input, System.lineSeparator());
-		for (String line : lines) {
+		for (int j = 0; j < lines.length; j++) {
+			String line = lines[j];
 			int separatorIndex = StringUtils.indexOf(line, separator);
 			if (separatorIndex < 0) {
 				throw new IllegalArgumentException("input is not in the required format, missing ':'");
@@ -49,6 +50,9 @@ public final class ParseChat {
 						break;
 					}
 					chatModel.setSentence(element);
+					if (j + 1 < lines.length) {
+						chatModel.setSentence(chatModel.getSentence() + "\\n");
+					}
 				}
 			}
 			res.add(chatModel);
