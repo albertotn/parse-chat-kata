@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -20,33 +21,38 @@ public final class ParseChat {
 		if (StringUtils.isEmpty(input)) {
 			throw new IllegalArgumentException("input must be not null and not empty");
 		}
-		int separatorIndex = StringUtils.indexOf(input, separator);
-		if (separatorIndex < 0) {
-			throw new IllegalArgumentException("input is not in the required format, missing ':'");
-		}
 		List<ChatModel> res = new ArrayList<ChatModel>();
-		ChatModel chatModel = new ChatModel();
-		String[] splitted = StringUtils.splitByWholeSeparator(input, separator);
-		for (int i = 0; i < splitted.length; i++) {
-			String element = splitted[i];
-			if (i == 0) {
-				if (element.length() == 0 || element.length() < 17) {
-					break;
+		String[] lines = StringUtils.split(input, System.lineSeparator());
+		for (String line : lines) {
+			int separatorIndex = StringUtils.indexOf(line, separator);
+			if (separatorIndex < 0) {
+				throw new IllegalArgumentException("input is not in the required format, missing ':'");
+			}
+			ChatModel chatModel = new ChatModel();
+			String[] splitted = StringUtils.splitByWholeSeparator(line, separator);
+			for (int i = 0; i < splitted.length; i++) {
+				String element = splitted[i];
+				if (i == 0) {
+					if (element.length() == 0) {
+						break;
+					}
+					chatModel.setDate(element.substring(0, 8));
+					chatModel.setMention(element + separator);
+					if (StringUtils.containsIgnoreCase(element, "customer")) {
+						chatModel.setType("customer");
+					} else if (StringUtils.containsIgnoreCase(element, "agent")) {
+						chatModel.setType("agent");
+					}
 				}
-				chatModel.setDate(element.substring(0, 8));
-				chatModel.setMention(element.substring(0, 17) + separator);
-				if (StringUtils.containsIgnoreCase(element, "customer")) {
-					chatModel.setType("customer");
+				if (i == 1) {
+					if (element.length() == 0) {
+						break;
+					}
+					chatModel.setSentence(element);
 				}
 			}
-			if (i == 1) {
-				if (element.length() == 0) {
-					break;
-				}
-				chatModel.setSentence(element);
-			}
+			res.add(chatModel);
 		}
-		res.add(chatModel);
 		return getAsString(res);
 	}
 
@@ -55,14 +61,21 @@ public final class ParseChat {
 		if (models == null || models.isEmpty()) {
 			return "";
 		}
-		builder.append("[{").append(System.lineSeparator());
-		for (ChatModel chatModel : models) {
+		builder.append("[");
+		Iterator<ChatModel> iter = models.iterator();
+		while (iter.hasNext()) {
+			ChatModel chatModel = iter.next();
+			builder.append("{").append(System.lineSeparator());
 			builder.append("  date: '" + chatModel.getDate() + "',").append(System.lineSeparator());
 			builder.append("  mention: '" + chatModel.getMention() + "',").append(System.lineSeparator());
 			builder.append("  sentence: '" + chatModel.getSentence() + "',").append(System.lineSeparator());
 			builder.append("  type: '" + chatModel.getType() + "'").append(System.lineSeparator());
+			builder.append("}");
+			if (iter.hasNext()) {
+				builder.append(", ");
+			}
 		}
-		builder.append("}]").append(System.lineSeparator());
+		builder.append("]").append(System.lineSeparator());
 		return builder.toString();
 	}
 
