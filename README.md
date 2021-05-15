@@ -19,11 +19,11 @@ When Eclipse is installed, clone this project from git / import from maven, see 
 
 This example can be packaged as jar and executed anywhere java is installed ( see prerequisite ). To create the package, run:
 
-  mvn compile package
-  
+    mvn compile package
+ 
 in the target directory there will be two jar: to run the jar with all dependecies run: 
 
-  java -jar parse-chat-kata-0.0.1-SNAPSHOT-jar-with-dependencies.jar InputFile
+    java -jar parse-chat-kata-0.0.1-SNAPSHOT-jar-with-dependencies.jar InputFile
   
 where InputFile is the file to parse
 
@@ -33,7 +33,7 @@ where InputFile is the file to parse
 
 In order to compile, clone the project, and from the command line run:
 
-  mvn compile
+    mvn compile
   
 Or let your ide do the job for you
 
@@ -41,7 +41,7 @@ Or let your ide do the job for you
 
 From command line run 
 
-  mvn compile test
+    mvn compile test
   
 In the output there will be tests outcome.
 
@@ -49,13 +49,9 @@ In the output there will be tests outcome.
 
 From the command line  run:
 
-  mvn compile exec:java -Dexec.mainClass="it.albertotn.ParseChat" -Dexec.args="InputFile"
+    mvn compile exec:java -Dexec.mainClass="it.albertotn.ParseChat" -Dexec.args="InputFile"
   
 where InputFile is your file, for example:
 
-  mvn compile exec:java -Dexec.mainClass="it.albertotn.ParseChat" -Dexec.args="step1.txt"
+    mvn compile exec:java -Dexec.mainClass="it.albertotn.ParseChat" -Dexec.args="step1.txt"
   
-## Run from java  
-
-
- 
