@@ -14,8 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 public final class ParseChat {
 
 	private final static String separator = " : ";
+	private List<String> agentDb = new ArrayList<>();
 
 	public ParseChat() {
+		this.agentDb.add("Emanuele Querzola");
 	}
 
 	public String parse(String input) {
@@ -47,6 +49,13 @@ public final class ParseChat {
 						chatModel.setType("customer");
 					} else if (StringUtils.containsIgnoreCase(element, "agent")) {
 						chatModel.setType("agent");
+					} else {
+						String name = StringUtils.strip(element.substring(8));
+						if (agentDb.contains(name)) {
+							chatModel.setType("agent");
+						} else {
+							chatModel.setType("customer");
+						}
 					}
 				}
 				if (i == 1) {
