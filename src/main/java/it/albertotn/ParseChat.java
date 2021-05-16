@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,9 @@ public final class ParseChat {
 		}
 		List<ChatModel> res = new ArrayList<ChatModel>();
 		String[] lines = StringUtils.split(input, System.lineSeparator());
+		List<String> toProcess = separateLines(lines);
+		boolean splittedLines = toProcess.size() != lines.length;
+		lines = toProcess.toArray(new String[toProcess.size()]);
 		for (int j = 0; j < lines.length; j++) {
 			String line = lines[j];
 			int separatorIndex = StringUtils.indexOf(line, separator);
@@ -51,13 +55,50 @@ public final class ParseChat {
 					}
 					chatModel.setSentence(element);
 					if (j + 1 < lines.length) {
-						chatModel.setSentence(chatModel.getSentence() + "\\n");
+						String terminator = "\\n";
+						if (splittedLines) {
+							terminator = "";
+						}
+						chatModel.setSentence(chatModel.getSentence() + terminator);
 					}
 				}
 			}
 			res.add(chatModel);
 		}
 		return getAsString(res);
+	}
+
+	private List<String> separateLines(String[] lines) {
+		if (lines == null || lines.length == 0) {
+			return new ArrayList<>();
+		}
+		List<String> toProcess = Arrays.asList(lines);
+		List<String> res = new ArrayList<>();
+		for (String line : toProcess) {
+			if (countMatch(line, "\\.\\d\\d:\\d\\d:\\d\\d") > 1) {
+				String[] elems = line.split("\\.\\d\\d:\\d\\d:\\d\\d");
+				for (int i = 0; i < elems.length; i++) {
+					if (i == 0) {
+						res.add(elems[0] + ".");
+					}
+					if (i == 1) {
+						res.add(StringUtils.substring(line, elems[0].length() + 1));
+					}
+				}
+
+			} else {
+				res.add(line);
+			}
+		}
+		return res;
+	}
+
+	private int countMatch(String str, String pattern) {
+		if (str == null || pattern == null) {
+			return 0;
+		}
+		String[] res = str.split(pattern);
+		return res.length;
 	}
 
 	private String getAsString(List<ChatModel> models) {
