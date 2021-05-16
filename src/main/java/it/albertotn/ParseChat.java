@@ -31,9 +31,15 @@ public final class ParseChat {
 		lines = toProcess.toArray(new String[toProcess.size()]);
 		for (int j = 0; j < lines.length; j++) {
 			String line = lines[j];
+			boolean replacedSeparator = false;
 			int separatorIndex = StringUtils.indexOf(line, separator);
 			if (separatorIndex < 0) {
-				throw new IllegalArgumentException("input is not in the required format, missing ':'");
+				if (!StringUtils.containsAnyIgnoreCase(line, "customer", "agent")) {
+					throw new IllegalArgumentException("input is not in the required format, missing ':'");
+				}
+				line = StringUtils.replaceIgnoreCase(line, "customer ", "Customer : ");
+				line = StringUtils.replaceIgnoreCase(line, "agent ", "Agent : ");
+				replacedSeparator = true;
 			}
 			ChatModel chatModel = new ChatModel();
 			String[] splitted = StringUtils.splitByWholeSeparator(line, separator);
@@ -45,6 +51,9 @@ public final class ParseChat {
 					}
 					chatModel.setDate(element.substring(0, 8));
 					chatModel.setMention(element + separator);
+					if (replacedSeparator) {
+						chatModel.setMention(StringUtils.removeEnd(chatModel.getMention(), ": "));
+					}
 					if (StringUtils.containsIgnoreCase(element, "customer")) {
 						chatModel.setType("customer");
 					} else if (StringUtils.containsIgnoreCase(element, "agent")) {
