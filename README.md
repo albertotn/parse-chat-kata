@@ -55,3 +55,12 @@ where InputFile is your file, for example:
 
     mvn compile exec:java -Dexec.mainClass="it.albertotn.ParseChat" -Dexec.args="step1.txt"
   
+# TODO - Future work
+
+- result json is not a valid for rfc7159 ( see here https://datatracker.ietf.org/doc/html/rfc7159#section-7 ). Following json standard notation (aka attributes between double quotes ) open the possibility to use a standard library like jackson to build the json, instead of a custom json write
+- in step 4 I realize that some sentences has \n and some not. I think that normalize this behaviour ( for example always remove it ) can help for further processing
+- it's to consider if sentences always ends with a point or not, real people in chat does not use point in the end of the sentences
+- in step 6 to figure out agent/customer I assume there is a database of agent avaiable and hardcoded into the code. This because step3 highlight the possibility that the chat is not one message for agent/customer, but many messages for each of them, so is not safe to infer that second message is from an agent ( awalys I mean! )
+- in step 7 mention is without double quote. I think that normalize, be more strict on a common schema is useful for later processing
+   
+  
